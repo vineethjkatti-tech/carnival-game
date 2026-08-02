@@ -1,4 +1,4 @@
-<img width="1024" height="237" alt="image" src="https://github.com/user-attachments/assets/be57cc46-b8f0-4a9e-bcbb-a815447e987c" />
+<img width="719" height="266" alt="image" src="https://github.com/user-attachments/assets/ceedd962-7700-424e-b1e9-d734db9cf567" /><img width="1024" height="237" alt="image" src="https://github.com/user-attachments/assets/be57cc46-b8f0-4a9e-bcbb-a815447e987c" />
 
 A short game about a guy who has to escape a carnival by answering riddles.
 
@@ -30,8 +30,7 @@ For each wrong answer you lose a life
 # Tech Stack
 Unlike traditional games, this game uses _html_, _css_ for styling, and _js_ for backend.
 
-# Note
 
-Serve **npx** on the folder before running the html or else it wont work.
+**Deployment URL:** https://carnival-game-xi.vercel.app/
 
 
