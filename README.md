@@ -27,6 +27,13 @@ For each correct answer you get a piece of the puzzle
 For each wrong answer you lose a life
 
 
+# Themes Used:
+
+**1. Corporate Burnout VS Carnival**: This game contrasts between cold, bluntness and logical with illogical, imaginary and creative.
+**2. The Anti-Logical Approach**: "_Every answer is not logical"_. Sometimes the answer might not make sense at all. So, be careful while answering the riddles
+**3. Joker as the Other Side**: The joker here is not another character but the repressed and indifferent version of the user himself.
+**4. The Abstract Shift**: Moving from loud, frantic neon arcade lights to a quiet, stark white screen with falling pixel-snow **represents** stillness and **catharsis**(ending).
+
 
 # Tech Stack
 Unlike traditional games, this game uses _html_, _css_ for styling, and _js_ for backend.
