@@ -14,4 +14,11 @@ You have 3 lives and there are **9 riddles** and for each right answer you a get
 with all the pieces.
 But, if you lose all you lives........._(try it yourself!!)_
 
+# Tech Stack
+Unlike traditional games, this game uses _html_, _css_ for styling, and _js_ for backend.
+
+# Note
+
+Serve **npx** on the folder before running the html or else it wont work.
+
 
