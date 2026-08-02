@@ -366,84 +366,84 @@ document.getElementById('btn-play').addEventListener('click', function () {
 
 const riddles = [
   {
-    question: 'You stand inside an hourglass. Sand falls endlessly from above, burying you up to your chest. You have been given a shovel to clear the ground, but the faster you dig, the faster the sand falls. How do you keep from suffocating?',
+    question: 'Who is almost ALWAYS the main villain or killer in an evil carnival movie?',
     options: [
-      { text: 'Shovel twice as fast to clear a gap before your energy runs out.', correct: false },
-      { text: 'Build a wooden roof over your head using the shovel\u2019s handle.', correct: false },
-      { text: 'Smash the glass walls so the sand spills out into the void.', correct: false },
-      { text: 'Drop the shovel and step out\u2014the hourglass has no ceiling, and you were the one shoveling.', correct: true }
+      { text: 'The creepy clown', correct: true },
+      { text: 'The popcorn vendor', correct: false },
+      { text: 'The ticket booth teenager', correct: false },
+      { text: 'The balloon artist', correct: false }
     ]
   },
   {
-    question: 'You are bound to a heavy iron mask that is fused to your face. Every second it tightens. Pulling it off requires all your strength, but each pull makes it tighter. How do you escape?',
+    question: 'Where does the final showdown between the killer and the hero usually take place?',
     options: [
-      { text: 'Yank it off with all your strength before it crushes you.', correct: false },
-      { text: 'Call for help until someone finds you and pries it off.', correct: false },
-      { text: 'You realize you were holding it on all along\u2014and let go.', correct: true },
-      { text: 'Break the chain with a hammer.', correct: false }
+      { text: 'The prize counter', correct: false },
+      { text: 'The parking lot', correct: false },
+      { text: 'The Hall of Mirrors or Funhouse', correct: true },
+      { text: 'The public restrooms', correct: false }
     ]
   },
   {
-    question: 'You are in a room full of clocks. Every clock shows a different time. The only way out is a door that reads: "OPEN ONLY AT THE CORRECT TIME." How do you leave?',
+    question: 'What ride is guaranteed to break down, jam, or trap characters at the top?',
     options: [
-      { text: 'Wind all the clocks to the same time.', correct: false },
-      { text: 'Find the master clock and smash it.', correct: false },
-      { text: 'Stop moving and wait for the door to open.', correct: false },
-      { text: 'Realize time isn\u2019t actually passing\u2014you\u2019re already late to nothing.', correct: true }
+      { text: 'The Ferris Wheel', correct: true },
+      { text: 'The Bumper Cars', correct: false },
+      { text: 'The Merry-Go-Round', correct: false },
+      { text: 'The Fun Slide', correct: false }
     ]
   },
   {
-    question: 'There is only one way out, and a madman stands beside it. He says: "I will let you through if you can tell me the password. The password is the answer to one question: What is the only thing you have been afraid to look at all night?" What is the password?',
+    question: 'Which character type almost always dies first when things go wrong?',
     options: [
-      { text: 'The maze itself', correct: false },
-      { text: 'The madman', correct: false },
-      { text: 'Yourself', correct: true },
-      { text: 'The exit', correct: false }
+      { text: 'The quiet protagonist', correct: false },
+      { text: 'The arrogant bully or teenager who wanders off alone', correct: true },
+      { text: 'The heroic local cop', correct: false },
+      { text: 'The carnival owner', correct: false }
     ]
   },
   {
-    question: 'You step onto an escalator that never ends. It rises forever. Behind you, the floor falls away. Ropes dangle from above, but every rope burns through the moment you touch it. How do you survive?',
+    question: 'What classic fortune-telling prop is usually cursed or predicts everyone’s doom?',
     options: [
-      { text: 'Keep climbing until you reach the top.', correct: false },
-      { text: 'Grab a rope and climb before it burns through.', correct: false },
-      { text: 'Jump onto the railing and slide down.', correct: false },
-      { text: 'Step off to the side.', correct: true }
+      { text: 'A magic 8-ball', correct: false },
+      { text: 'An automated animatronic machine (like Zoltar)', correct: true },
+      { text: 'A scratch-off ticket', correct: false },
+      { text: 'A fortune cookie', correct: false }
     ]
   },
   {
-    question: 'You are shackled in golden chains. The manacles are strong, the chain is long, and no lock is visible. You are given two options: pull until they break, or wait for a rescue that will never come. How do you free yourself?',
+    question: 'What happens to cell phones as soon as the characters step onto the carnival grounds?',
     options: [
-      { text: 'Pull until they break.', correct: false },
-      { text: 'Wait for a rescue that will never come.', correct: false },
-      { text: 'Open your hands.', correct: true },
-      { text: 'Chew through the chain.', correct: false }
+      { text: 'They download a scary app', correct: false },
+      { text: 'They instantly lose signal or die', correct: true },
+      { text: 'They start calling the killer automatically', correct: false },
+      { text: 'The screen shatters', correct: false }
     ]
   },
   {
-    question: 'You are trapped in a dark room lit only by a single candle. The flame grows as you watch it, and a voice whispers: "Blow it out, and you will finally see the room you\u2019ve been in all along." But if you blow it out, you are plunged into total darkness. How do you proceed?',
+    question: 'What classic carnival snack is almost always turned into something disgusting or poisonous?',
     options: [
-      { text: 'Blow it out and face the dark.', correct: false },
-      { text: 'Shield the flame and keep it safe.', correct: false },
-      { text: 'Extinguish the flame.', correct: true },
-      { text: 'Wait until the candle burns out on its own.', correct: false }
+      { text: 'Candy Apples', correct: true },
+      { text: 'Soft Pretzels', correct: false },
+      { text: 'Funnel Cake', correct: false },
+      { text: 'Nachos', correct: false }
     ]
   },
   {
-    question: 'You are on a stage in front of an endless audience. Every person is holding a script and following it exactly. You are given a script too, but every line is blank. The audience is waiting. What do you do?',
+    question: 'What warning does a local elder or creepy carnival worker ALWAYS give early in the movie?',
     options: [
-      { text: 'Improvise something new.', correct: false },
-      { text: 'Stand still until the audience leaves.', correct: false },
-      { text: 'Drop the script.', correct: true },
-      { text: 'Read the blank script as if it says something.', correct: false }
+      { text: '"The food is overpriced!"', correct: false },
+      { text: '"Watch out for rain!"', correct: false },
+      { text: '"Don\'t stay after dark / Don\'t go in there!"', correct: true },
+      { text: '"Keep your shoes tied!"', correct: false }
     ]
   },
   {
-    question: 'You stand before a well, and the water is bitter. The man beside it says: "Drink, and you will be free of the Carnival forever." You have been thirsty for hours. The water stinks of rust and regret. What do you do?',
+    question: 'What happens when a character tries to run away and escape the carnival grounds?',
     options: [
-      { text: 'Drink it anyway.', correct: false },
-      { text: 'Refuse politely and keep walking.', correct: false },
-      { text: 'Walk away from a well.', correct: true },
-      { text: 'Pour the water out.', correct: false }
+      { text: 'They get trapped in an endless loop that brings them right back to the center', correct: true },
+      { text: 'A bus picks them up immediately', correct: false },
+      { text: 'The exit gates open smoothly', correct: false },
+      { text: 'They get arrested by security', correct: false }
     ]
   }
 ];
