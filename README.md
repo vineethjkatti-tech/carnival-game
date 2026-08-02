@@ -1,4 +1,4 @@
-<img width="719" height="266" alt="image" src="https://github.com/user-attachments/assets/ceedd962-7700-424e-b1e9-d734db9cf567" /><img width="1024" height="237" alt="image" src="https://github.com/user-attachments/assets/be57cc46-b8f0-4a9e-bcbb-a815447e987c" />
+
 
 A short game about a guy who has to escape a carnival by answering riddles.
 
