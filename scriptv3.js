@@ -402,12 +402,12 @@ const riddles = [
     ]
   },
   {
-    question: 'Which fortune-telling device is always cursed or creepy?',
+    question: 'Which carnival attraction is guaranteed to trap characters with creepy reflections?',
     options: [
-      { text: 'An animatronic machine (like Zoltar)', correct: true },
-      { text: 'A kitchen microwave', correct: false },
-      { text: 'A soda vending machine', correct: false },
-      { text: 'A pocket calculator', correct: false }
+      { text: 'The Hall of Mirrors', correct: true },
+      { text: 'The petting zoo', correct: false },
+      { text: 'The ticket booth', correct: false },
+      { text: 'The souvenir T-shirt rack', correct: false }
     ]
   },
   {
