@@ -1,0 +1,1685 @@
+
+    /* ==========================================================
+       1. GLOBAL / 8-BIT PIXEL FOUNDATION
+       ========================================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* Scene 1 - Reality (terminal) */
+      --reality-bg: #282C34;
+      /* card / window bg */
+      --reality-text: #ABB2BF;
+      /* muted off-white */
+      --reality-accent: #5C6370;
+      /* boring steel */
+
+      /* Scenes 2-4 - Carnival */
+      --carnival-bg: #0A000F;
+      /* deep void black */
+      --carnival-red: #FF003C;
+      /* joker crimson */
+      --carnival-yellow: #FFD000;
+      /* arcade yellow */
+      --carnival-purple: #8000FF;
+      /* surreal purple */
+      --carnival-green: #00FF66;
+      /* acid green */
+      --carnival-text: #FFFFFF;
+      /* stark white */
+
+      /* Scene 5 - Ending */
+      --ending-bg: #F4F5F7;
+      /* ethereal snow white */
+      --ending-text: #1F242D;
+      /* reality charcoal */
+      --ending-punch: #FF003C;
+      /* preserved carnival red */
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background: var(--carnival-bg);
+      font-family: 'Courier New', Courier, monospace;
+      -webkit-font-smoothing: none;
+      /* keep it crunchy */
+    }
+
+    /* Pixel-perfect image scaling across the whole game */
+    img,
+    canvas,
+    .tile,
+    .joker-sprite {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    /* Sharp pixel corners ONLY - no rounded corners anywhere */
+    * {
+      border-radius: 0 !important;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ==========================================================
+       2. SCENE SYSTEM (SPA router)
+       Only the scene with '.active' is visible. JS toggles it.
+       ========================================================== */
+    .scene {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.45s ease;
+    }
+
+    .scene.active {
+      opacity: 1;
+      pointer-events: auto;
+      animation: sceneFadeIn 0.6s ease both;
+    }
+
+    @keyframes sceneFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    /* ==========================================================
+       3. GLITCH OVERLAYS (scene transitions + violent ending flash)
+       ========================================================== */
+    .glitch-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      pointer-events: none;
+      opacity: 0;
+      mix-blend-mode: screen;
+      background: repeating-linear-gradient(0deg,
+          rgba(255, 0, 60, 0.35) 0px, rgba(255, 0, 60, 0.35) 2px,
+          transparent 2px, transparent 4px,
+          rgba(0, 255, 255, 0.25) 4px, rgba(0, 255, 255, 0.25) 6px,
+          transparent 6px, transparent 8px);
+    }
+
+    .glitch-overlay.on {
+      opacity: 1;
+      animation: glitchBar 0.3s steps(3) infinite;
+    }
+
+    @keyframes glitchBar {
+      0% {
+        transform: translateX(-6px);
+      }
+
+      50% {
+        transform: translateX(6px);
+      }
+
+      100% {
+        transform: translateX(-3px);
+      }
+    }
+
+    /* Violent color strobing used by triggerEnding() */
+    .glitch-overlay.violent {
+      background: none;
+      mix-blend-mode: normal;
+      animation: violentFlash 0.12s steps(1) infinite;
+    }
+
+    @keyframes violentFlash {
+      0% {
+        background: #000;
+      }
+
+      33% {
+        background: #fff;
+      }
+
+      66% {
+        background: var(--carnival-red);
+      }
+
+      100% {
+        background: #000;
+      }
+    }
+
+    body.glitching .scene.active {
+      animation: sceneGlitch 0.28s steps(2) infinite;
+    }
+
+    @keyframes sceneGlitch {
+      0% {
+        transform: translateX(-4px);
+        clip-path: inset(0 0 0 0);
+      }
+
+      25% {
+        transform: translateX(4px);
+        clip-path: inset(12% 0 58% 0);
+      }
+
+      50% {
+        transform: translateX(-2px);
+        clip-path: inset(60% 0 10% 0);
+      }
+
+      75% {
+        transform: translateX(3px);
+        clip-path: inset(30% 0 40% 0);
+      }
+
+      100% {
+        transform: translateX(0);
+        clip-path: inset(0 0 0 0);
+      }
+    }
+
+    /* ==========================================================
+       JOKER JUMPCUT (wrong answers / try again)
+       The Joker hard-cuts in to cover the whole screen, holds,
+       then cuts back to the exact same screen he interrupted.
+       ========================================================== */
+    .joker-jumpcut {
+      position: fixed;
+      inset: 0;
+      z-index: 95;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--carnival-bg);
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .joker-jumpcut img {
+      display: block;
+      width: min(100vw, 100vh);
+      height: min(100vw, 100vh);
+      object-fit: cover;
+    }
+
+    .joker-jumpcut.active {
+      animation: jumpcutIn 0.25s steps(6, end) both;
+    }
+
+    @keyframes jumpcutIn {
+      0% {
+        transform: scale(0.6);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .joker-jumpcut.cut-out {
+      animation: jumpcutOut 0.18s steps(4, end) both;
+    }
+
+    @keyframes jumpcutOut {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(1.35);
+        opacity: 0;
+      }
+    }
+
+    /* ==========================================================
+       CINEMATIC PHOTO REVEAL (puzzle solved)
+       White photo-flash -> hold the solved image -> dark cut
+       ========================================================== */
+    .puzzle-flash {
+      position: fixed;
+      inset: 0;
+      z-index: 85;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      background: #fff;
+      opacity: 0;
+    }
+
+    .puzzle-flash.active {
+      animation: cameraFlash 2.2s ease both;
+    }
+
+    .puzzle-flash-frame {
+      max-width: min(70vh, 92vw);
+      border: 4px solid var(--carnival-yellow);
+      box-shadow: 8px 8px 0 var(--carnival-red);
+      opacity: 0;
+    }
+
+    .puzzle-flash.active .puzzle-flash-frame {
+      animation: frameIn 2.2s ease both;
+    }
+
+    #puzzle-flash-img {
+      display: block;
+      width: 100%;
+      max-height: 70vh;
+      object-fit: contain;
+    }
+
+    @keyframes cameraFlash {
+      0% {
+        opacity: 0;
+        background: #fff;
+      }
+
+      8% {
+        opacity: 1;
+        background: #fff;
+      }
+
+      16% {
+        opacity: 1;
+        background: #fff;
+      }
+
+      20% {
+        opacity: 1;
+        background: var(--carnival-bg);
+      }
+
+      80% {
+        opacity: 1;
+        background: var(--carnival-bg);
+      }
+
+      100% {
+        opacity: 0;
+        background: var(--carnival-bg);
+      }
+    }
+
+    @keyframes frameIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.6);
+      }
+
+      22% {
+        opacity: 0;
+      }
+
+      30% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      85% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    /* ---- Reward flash: "YOU PASSED!" + puzzle piece preview ---- */
+    .reward-flash {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      background: rgba(0, 0, 0, 0.72);
+      pointer-events: none;
+    }
+
+    .reward-flash .passed-banner {
+      font-family: 'Press Start 2P';
+      font-size: clamp(22px, 5vw, 40px);
+      color: var(--carnival-green);
+      text-shadow: 4px 4px 0 #000, 0 0 24px rgba(0, 255, 102, 0.8);
+      letter-spacing: 3px;
+      animation: passedPop 0.35s ease both;
+    }
+
+    .reward-flash .piece-preview {
+      width: clamp(90px, 18vw, 150px);
+      height: clamp(90px, 18vw, 150px);
+      border: 4px solid var(--carnival-green);
+      box-shadow: 6px 6px 0 var(--carnival-red);
+      animation: pieceSlide 0.4s ease both;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    .reward-flash .piece-label {
+      font-family: 'Press Start 2P';
+      font-size: 11px;
+      color: var(--carnival-text);
+      letter-spacing: 1px;
+      animation: pieceSlide 0.5s ease both;
+    }
+
+    @keyframes passedPop {
+      0% {
+        transform: scale(0.2);
+        opacity: 0;
+      }
+      60% {
+        transform: scale(1.15);
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes pieceSlide {
+      0% {
+        transform: translateY(24px);
+        opacity: 0;
+      }
+      100% {
+        transform: none;
+        opacity: 1;
+      }
+    }
+
+    /* ==========================================================
+       4. SCENE 1 -- TERMINAL (Reality / Win95 + MS-DOS style)
+       Harsh corporate grays + white, monospace, rigid.
+       ========================================================== */
+    .terminal {
+      background: #1E2127;
+    }
+
+    .term-window {
+      width: min(780px, 95vw);
+      background: var(--reality-bg);
+      border: 2px solid var(--reality-accent);
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.55);
+      position: relative;
+      /* anchors the escape button */
+      font-family: 'VT323', 'Courier New', monospace;
+    }
+
+    .term-titlebar {
+      background: var(--reality-accent);
+      color: var(--reality-text);
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 10px;
+      font-size: 17px;
+      letter-spacing: 1px;
+    }
+
+    .term-body {
+      background: #1E2127;
+      color: var(--reality-text);
+      padding: 22px 26px 52px;
+      font-size: 21px;
+      line-height: 1.6;
+    }
+
+    .term-line {
+      margin-bottom: 10px;
+    }
+
+    .term-line.dim {
+      color: #6C7380;
+    }
+
+    .term-line.danger {
+      color: #1E2127;
+      background: var(--reality-accent);
+      padding: 2px 6px;
+      font-weight: bold;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 11px;
+      height: 19px;
+      background: var(--reality-text);
+      vertical-align: middle;
+      animation: blink 1s steps(1) infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    /* Subtle, easy-to-miss escape hatch */
+    .btn-escape {
+      position: absolute;
+      bottom: 8px;
+      right: 10px;
+      background: var(--reality-bg);
+      border: 2px solid var(--reality-accent);
+      color: var(--reality-accent);
+      font-family: 'VT323', monospace;
+      font-size: 16px;
+      padding: 2px 12px;
+      cursor: pointer;
+      opacity: 0.8;
+      transition: all 0.2s ease;
+    }
+
+    .btn-escape:hover {
+      color: var(--reality-text);
+      border-color: var(--reality-text);
+      opacity: 1;
+    }
+
+    /* ==========================================================
+       5. CARNIVAL BASE (Scenes 2, 3, 4)
+       Pitch black + neon red + glowing yellow.
+       ========================================================== */
+    .carnival {
+      background: var(--carnival-bg);
+      color: var(--carnival-text);
+    }
+
+    .pixel-title {
+      font-family: 'Press Start 2P';
+      font-size: clamp(16px, 3.4vw, 30px);
+      color: var(--carnival-red);
+      text-shadow: 3px 3px 0 var(--carnival-bg), 0 0 18px rgba(255, 0, 60, 0.6);
+      letter-spacing: 2px;
+      text-align: center;
+      margin-bottom: 16px;
+      margin-top: 30px;
+    }
+
+    .pixel-title.small {
+      font-size: clamp(12px, 2.2vw, 18px);
+    }
+
+    /* ---- Lives HUD (balloon emojis) ---- */
+    .hud {
+      position: fixed;
+      top: 12px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      z-index: 5;
+    }
+
+    .lives-label {
+      font-family: 'Press Start 2P';
+      font-size: 10px;
+      color: var(--carnival-red);
+      letter-spacing: 2px;
+      text-shadow: 0 0 8px rgba(255, 0, 60, 0.7);
+    }
+
+    .balloons {
+      font-family: 'Press Start 2P';
+      font-size: 26px;
+      color: var(--carnival-red);
+      text-shadow: 0 0 10px rgba(255, 0, 60, 0.7);
+      letter-spacing: 2px;
+      line-height: 1;
+      min-width: 26px;
+      text-align: center;
+    }
+
+    .balloons.pop {
+      animation: numPop 0.4s ease;
+    }
+
+    @keyframes numPop {
+      0% {
+        transform: scale(1);
+      }
+
+      40% {
+        transform: scale(1.5);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    /* ---- Dialogue box (bottom of screen) ---- */
+    .dialogue-box {
+      width: min(720px, 92vw);
+      background: var(--carnival-bg);
+      border: 4px solid var(--carnival-yellow);
+      box-shadow: 6px 6px 0 var(--carnival-red);
+      padding: 14px 18px;
+      min-height: 104px;
+      max-height: 46vh;
+      overflow-y: auto;
+    }
+
+    .dialogue-box .speaker {
+      display: block;
+      font-family: 'Press Start 2P';
+      font-size: 9px;
+      color: var(--carnival-red);
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .dialogue-text {
+      font-family: 'VT323';
+      font-size: clamp(18px, 3vw, 24px);
+      line-height: 1.5;
+      color: var(--carnival-yellow);
+    }
+
+    /* ---- Pixel buttons (blocky borders, hard shadow) ---- */
+    .pixel-btn {
+      font-family: 'Press Start 2P';
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: var(--carnival-yellow);
+      background: var(--carnival-bg);
+      border: 3px solid var(--carnival-yellow);
+      box-shadow: 5px 5px 0 var(--carnival-red);
+      padding: 12px 18px;
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.12s ease,
+        color 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .pixel-btn:hover {
+      transform: translate(3px, 3px);
+      box-shadow: 2px 2px 0 var(--carnival-red);
+      background: var(--carnival-red);
+      color: #fff;
+    }
+
+    .pixel-btn.small {
+      font-size: 9px;
+      padding: 10px 14px;
+    }
+
+    .pixel-btn.ghost {
+      color: var(--carnival-green);
+      border-color: var(--carnival-green);
+      box-shadow: 5px 5px 0 var(--carnival-bg);
+    }
+
+    .pixel-btn.ghost:hover {
+      background: var(--carnival-green);
+      color: var(--carnival-bg);
+      border-color: var(--carnival-green);
+      box-shadow: 2px 2px 0 var(--carnival-bg);
+    }
+
+    .play-btn {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    .play-btn.fade-in {
+      opacity: 1;
+      transform: none;
+      transition: opacity 0.6s ease, transform 0.6s ease,
+        background 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .play-btn.fade-in:hover {
+      transform: translate(3px, 3px);
+    }
+
+    /* ---- Feedback line ---- */
+    .feedback {
+      font-family: 'VT323';
+      font-size: 19px;
+      color: var(--carnival-red);
+      text-align: center;
+      margin-top: 10px;
+      min-height: 20px;
+    }
+
+    .feedback.good {
+      color: var(--carnival-green);
+    }
+
+    /* ==========================================================
+       6. TRANSITION SCENE (pitch black, red typing)
+       ========================================================== */
+    #scene-transition {
+      background: var(--carnival-bg);
+    }
+
+    .transition-text {
+      font-family: 'Press Start 2P';
+      font-size: clamp(12px, 3vw, 20px);
+      color: var(--carnival-red);
+      text-shadow: 0 0 12px rgba(255, 0, 60, 0.7);
+      line-height: 1.8;
+      text-align: center;
+      max-width: 720px;
+    }
+
+    /* ==========================================================
+       7. SCENE 2 -- JOKER INTRO  (pouncing villain)
+       ========================================================== */
+    #scene-joker {
+      justify-content: flex-start;
+      padding-top: 40px;
+    }
+
+    .joker-sprite {
+      width: clamp(140px, 24vw, 210px);
+      background: none;
+      border: none;
+      box-shadow: none;
+      /* CONTINUOUS pounce: scale up/down + shift on the Y axis */
+      animation: pounce 1.1s ease-in-out infinite;
+    }
+
+    .joker-sprite.small {
+      width: clamp(70px, 12vw, 100px);
+    }
+
+    @keyframes pounce {
+
+      0%,
+      100% {
+        transform: translateY(0) scale(1);
+      }
+
+      50% {
+        transform: translateY(-10px) scale(1.08);
+      }
+    }
+
+    #scene-joker .dialogue-box {
+      margin-top: auto;
+    }
+
+    /* ==========================================================
+       8. SCENE 3 -- THE RIDDLES
+       ========================================================== */
+    #scene-riddles {
+      justify-content: flex-start;
+      padding-top: 64px;
+      overflow-y: auto;
+    }
+
+    .riddle-choices {
+      width: min(720px, 92vw);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-top: 20px;
+      margin-bottom: 16px;
+    }
+
+    .answer-btn {
+      font-family: 'Press Start 2P';
+      font-size: 11px;
+      line-height: 1.6;
+      color: var(--carnival-text);
+      border-color: grey;
+      background: grey;
+      box-shadow: 5px 5px 0 #ff0000;
+      padding: 14px;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    /* LOGICAL answers = boring steel trap. SURREAL = correct + purple. */
+    .answer-btn.logical {
+      color: var(--reality-text);
+      border-color: var(--reality-accent);
+      background: #1A1D24;
+    }
+
+    .answer-btn.logical:hover {
+      border-color: #828997;
+    }
+
+    .answer-btn.surreal {
+      color: var(--reality-text);
+      border-color: var(--reality-accent);
+      background: #1A1D24;
+    }
+
+    .answer-btn.surreal:hover {
+      border-color: #828997;
+    }
+
+    .answer-btn.correct {
+      background: var(--carnival-red);
+      color: var(--carnival-bg);
+      border-color: var(--carnival-red);
+      box-shadow: 5px 5px 0 var(--carnival-red);
+    }
+
+    .answer-btn.wrong {
+      background: var(--carnival-red);
+      color: #fff;
+      border-color: var(--carnival-red);
+      animation: wrongShake 0.35s ease;
+    }
+
+    .riddle-choices.reveal .answer-btn {
+      animation: btnIn 0.3s ease both;
+    }
+
+    @keyframes btnIn {
+      from {
+        transform: translateY(10px);
+        opacity: 0;
+      }
+
+      to {
+        transform: none;
+        opacity: 1;
+      }
+    }
+
+    @keyframes wrongShake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-6px);
+      }
+
+      75% {
+        transform: translateX(6px);
+      }
+    }
+
+    #scene-riddles .dialogue-box {
+      margin-top: auto;
+    }
+
+    #scene-riddles .dialogue-text {
+      font-size: clamp(16px, 2.6vw, 20px);
+    }
+
+    /* ==========================================================
+       9. SCENE 4 -- THE FINAL PICTURE PUZZLE
+       Joker: pounce STOPPED + scaled up (intimidating).
+       ========================================================== */
+    #scene-puzzle {
+      justify-content: flex-start;
+      padding-top: 64px;
+    }
+
+    #scene-puzzle .joker-sprite {
+      animation: none;
+      /* stop bouncing */
+      transform: scale(1.35);
+      /* loom over the player */
+      box-shadow: none;
+    }
+
+    .puzzle-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      width: min(300px, 70vw);
+      aspect-ratio: 1 / 1;
+      background: var(--carnival-bg);
+      border: 4px solid var(--carnival-yellow);
+      box-shadow: 6px 6px 0 var(--carnival-red);
+      padding: 3px;
+      margin-top: 18px;
+    }
+
+    .puzzle-grid.shake {
+      animation: wrongShake 0.4s ease;
+    }
+
+    .tile {
+      position: relative;
+      border: 2px solid #2A2A33;
+      background-color: #12001A;
+      background-size: 300% 300%;
+      /* 3x3 slice of the source image */
+      background-repeat: no-repeat;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    .tile:hover {
+      transform: scale(1.04);
+    }
+
+    .tile.selected {
+      outline: 3px solid var(--carnival-red);
+      box-shadow: inset 0 0 0 3px var(--carnival-yellow);
+    }
+
+    /* Small index badge - delete this span in JS to go full-image */
+    .tile-num {
+      position: absolute;
+      top: 2px;
+      left: 3px;
+      font-family: 'Press Start 2P';
+      font-size: 8px;
+      color: rgba(255, 255, 255, 0.75);
+      background: rgba(0, 0, 0, 0.6);
+      padding: 2px 3px;
+      pointer-events: none;
+    }
+
+    .puzzle-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: min(300px, 70vw);
+      margin-top: 16px;
+      margin-bottom: 16px;
+    }
+
+    #scene-puzzle .dialogue-box {
+      margin-top: auto;
+    }
+
+    /* ==========================================================
+       10. SCENE 5 -- ENDING (white / winter-reality blend)
+       ========================================================== */
+    #scene-ending {
+      background: var(--ending-bg);
+      justify-content: center;
+    }
+
+    #snow-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .ending-wrap {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding-bottom: 90px;
+    }
+
+    .ending-text {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: clamp(14px, 2.3vw, 22px);
+      color: var(--ending-text);
+      letter-spacing: 1px;
+      margin: 12px 0;
+      opacity: 0;
+      transition: opacity 3s ease;
+    }
+
+    .ending-text.show {
+      opacity: 1;
+    }
+
+    .ending-text.red {
+      color: var(--carnival-red);
+    }
+
+    /* "End Game" - boring corporate button from Scene 1 */
+    #btn-end-game {
+      position: relative;
+      z-index: 1;
+      margin-top: 30px;
+      background: var(--reality-bg);
+      border: 2px solid var(--reality-accent);
+      color: var(--reality-text);
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+      padding: 8px 22px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 2s ease;
+    }
+
+    #btn-end-game.show {
+      opacity: 1;
+    }
+
+    #btn-end-game:hover {
+      background: #2C313A;
+      color: #FFFFFF;
+    }
+
+    /* ==========================================================
+       11. GAME OVER OVERLAY (lives = 0) -> auto-reload
+       ========================================================== */
+    .game-over {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      background: var(--carnival-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      animation: sceneFadeIn 0.7s ease both;
+    }
+
+    .game-over-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: min(720px, 94vw);
+    }
+
+    .game-over-joker {
+      width: clamp(80px, 14vw, 120px);
+      border: 4px solid var(--carnival-red);
+      box-shadow: 0 0 30px rgba(255, 0, 60, 0.7);
+      margin: 18px 0;
+      animation: pounce 1.1s ease-in-out infinite;
+    }
+
+    .game-over .dialogue-box {
+      width: min(640px, 92vw);
+    }
+
+    .game-over-hint {
+      font-family: 'Press Start 2P';
+      font-size: 10px;
+      color: var(--carnival-red);
+      margin-top: 16px;
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px rgba(255, 0, 60, 0.8);
+      line-height: 1.8;
+    }
+
+    #btn-gameover-reload {
+      margin-top: 18px;
+    }
+
+    .game-over h1 {
+      font-family: 'Press Start 2P';
+      color: var(--carnival-red);
+      font-size: clamp(22px, 5vw, 40px);
+      text-shadow: 3px 3px 0 #fff, 0 0 20px var(--carnival-red);
+      letter-spacing: 3px;
+    }
+
+    .game-over p {
+      font-family: 'VT323';
+      font-size: 20px;
+      color: #999;
+      margin-top: 14px;
+    }
+
+    .game-over .redline {
+      color: var(--carnival-red);
+    }
+
+
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #f6f8fc;
+  --panel: #ffffff;
+  --text: #202124;
+  --text-secondary: #5f6368;
+  --border: #dadce0;
+  --hover: #e8eaed;
+  --nav-selected-bg: #d3e3fd;
+  --nav-selected-text: #001d35;
+  --red: #c5221f;
+  --blue: #1a73e8;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Google Sans', 'Roboto', Arial, Helvetica, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  font-size: 14px;
+}
+
+.hidden { display: none !important; }
+
+svg { width: 20px; height: 20px; display: block; }
+
+.icon-btn {
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.icon-btn:hover { background: var(--hover); }
+
+/* ================= TOP BAR ================= */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--panel);
+  height: 64px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 16px;
+  padding-right: 16px;
+}
+.brand-icon svg { width: 34px; height: 34px; }
+.brand-text {
+  font-size: 22px;
+  color: var(--text-secondary);
+  font-weight: 400;
+  letter-spacing: -0.5px;
+}
+
+.search-wrap {
+  flex: 1;
+  max-width: 720px;
+  display: flex;
+  align-items: center;
+  background: #eaf1fb;
+  border-radius: 28px;
+  padding: 0 8px;
+  height: 48px;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.search-wrap:focus-within {
+  background: var(--panel);
+  box-shadow: 0 1px 1px rgba(0,0,0,.1), 0 1px 4px rgba(0,0,0,.15);
+}
+.search-icon {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  cursor: pointer;
+}
+.search-wrap input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 16px;
+  color: var(--text);
+  height: 100%;
+}
+.search-wrap input::placeholder { color: var(--text-secondary); }
+.search-clear {
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 16px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: none;
+}
+.search-clear:hover { background: var(--hover); }
+
+.topbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: #a142f4;
+  color: #fff;
+  font-weight: 500;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ================= LAYOUT ================= */
+.layout {
+  display: flex;
+  height: calc(100vh - 64px);
+  overflow: hidden;
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar {
+  width: 256px;
+  flex-shrink: 0;
+  padding: 8px 4px 16px 8px;
+  overflow-y: auto;
+  transition: width 0.2s, margin-left 0.2s;
+}
+.sidebar.collapsed {
+  width: 68px;
+  margin-left: -4px;
+}
+.sidebar.collapsed .nav-label,
+.sidebar.collapsed .nav-count,
+.sidebar.collapsed .nav-labels-title,
+.sidebar.collapsed #labelsNav,
+.sidebar.collapsed .compose-btn span {
+  display: none;
+}
+.sidebar.collapsed .compose-btn {
+  width: 56px;
+  border-radius: 16px;
+  padding: 0;
+  justify-content: center;
+}
+.sidebar.collapsed .nav-item { justify-content: center; width: 48px; margin: 0 auto; }
+
+.compose-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 8px 16px 8px;
+  padding: 0 20px;
+  height: 56px;
+  background: #c2e7ff;
+  border: none;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+  transition: box-shadow 0.15s;
+  width: 142px;
+}
+.compose-btn:hover { box-shadow: 0 1px 3px rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15); }
+.compose-btn svg { width: 22px; height: 22px; fill: var(--text); }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 0 12px 0 20px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: 0 16px 16px 0;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text);
+  text-align: left;
+  transition: background 0.1s;
+  margin-bottom: 2px;
+}
+.nav-item:hover { background: var(--hover); }
+.nav-item.active {
+  background: var(--nav-selected-bg);
+  color: var(--nav-selected-text);
+  font-weight: 700;
+}
+.nav-ico { display: flex; align-items: center; }
+.nav-item svg { fill: var(--text-secondary); width: 19px; height: 19px; }
+.nav-item.active svg { fill: #001d35; }
+.nav-count {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  padding-right: 8px;
+}
+.nav-item.active .nav-count { color: #001d35; }
+
+.nav-labels-title {
+  padding: 24px 20px 4px 20px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.label-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 0 12px 0 20px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: 0 16px 16px 0;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text);
+  text-align: left;
+  margin-bottom: 2px;
+}
+.label-item:hover { background: var(--hover); }
+.label-item.active {
+  background: var(--nav-selected-bg);
+  color: var(--nav-selected-text);
+  font-weight: 700;
+}
+.label-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-left: 5px;
+}
+.label-item svg { fill: var(--text-secondary); width: 19px; height: 19px; }
+
+/* ================= CONTENT ================= */
+.content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.view { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+/* ----- tabs ----- */
+.tabs {
+  display: flex;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--border);
+  gap: 4px;
+}
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+}
+.tab svg { width: 18px; height: 18px; fill: var(--text-secondary); }
+.tab:hover { background: var(--hover); }
+.tab.active { color: var(--blue); }
+.tab.active svg { fill: var(--blue); }
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--blue);
+  border-radius: 3px 3px 0 0;
+}
+
+/* ----- toolbar ----- */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 12px;
+}
+.toolbar-count {
+  margin-left: 8px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+.toolbar .spacer { flex: 1; }
+
+/* ----- email list ----- */
+.email-list {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--panel);
+}
+
+.email-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 16px 0 12px;
+  height: 40px;
+  border-bottom: 1px solid #f1f3f4;
+  cursor: pointer;
+  user-select: none;
+  background: var(--panel);
+}
+.email-row.unread {
+  background: #fff;
+  font-weight: 700;
+}
+.email-row.unread .email-from,
+.email-row.unread .email-subject-snippet,
+.email-row.unread .email-date {
+  font-weight: 700;
+}
+.email-row:hover {
+  box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+}
+.email-row.selected {
+  background: #f2f6fc;
+}
+.email-row.selected .email-subject-snippet { color: var(--text); }
+
+.email-check { flex-shrink: 0; }
+.email-check input { width: 16px; height: 16px; cursor: pointer; accent-color: var(--blue); }
+.email-star { flex-shrink: 0; }
+.email-star svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: var(--text-secondary);
+  stroke-width: 1.5;
+}
+.email-star svg.filled { fill: #f4b400; stroke: #f4b400; }
+
+.email-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  flex-shrink: 0;
+  margin: 0 6px;
+}
+
+.email-from {
+  width: 210px;
+  flex-shrink: 0;
+  font-size: 14px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.email-subject-snippet {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.email-subject-snippet b { font-weight: 400; color: #3c4043; }
+.email-row.unread .email-subject-snippet b { font-weight: 700; color: var(--text); }
+.email-subject-snippet .snippet { color: var(--text-secondary); font-weight: 400; }
+
+.email-attr {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.email-attach svg { width: 16px; height: 16px; fill: var(--text-secondary); }
+.email-label-chip {
+  font-size: 11px;
+  font-weight: 600;
+  color: #3c4043;
+  background: #f1f3f4;
+  border-radius: 8px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+.email-date {
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  min-width: 56px;
+  text-align: right;
+}
+
+/* ----- empty state ----- */
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  padding: 40px;
+}
+.empty-state svg { width: 64px; height: 64px; fill: #dadce0; }
+
+/* ================= EMAIL VIEW ================= */
+.email-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+}
+
+.email-content {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--panel);
+  padding: 24px 32px 48px 48px;
+  max-width: 960px;
+}
+.email-content h1 {
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.3;
+  margin-bottom: 16px;
+}
+.email-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.email-meta .email-avatar { width: 40px; height: 40px; font-size: 16px; }
+.email-meta .who { flex: 1; min-width: 0; }
+.email-meta .from-name { font-weight: 500; font-size: 14px; }
+.email-meta .from-email { color: var(--text-secondary); font-size: 12px; }
+.email-meta .meta-time { color: var(--text-secondary); font-size: 12px; white-space: nowrap; }
+.meta-actions { display: flex; gap: 4px; }
+
+.email-actions {
+  display: flex;
+  gap: 8px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+.email-actions button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  border-radius: 4px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+}
+.email-actions button:hover { background: var(--hover); }
+.email-actions button svg { width: 18px; height: 18px; fill: var(--text-secondary); }
+
+.email-body {
+  padding: 24px 0;
+  font-size: 14px;
+}
+
+.email-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 0;
+}
+.attachment-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #f1f3f4;
+  font-size: 13px;
+  color: var(--text);
+  user-select: none;
+  cursor: default;
+}
+.attachment-chip svg { width: 18px; height: 18px; fill: var(--text-secondary); }
+.attachment-size { color: var(--text-secondary); font-size: 12px; }
+
+/* ================= COMPOSE ================= */
+.compose-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+}
+.compose-window {
+  position: absolute;
+  bottom: 0;
+  right: 16px;
+  width: 520px;
+  height: 540px;
+  background: var(--panel);
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12), 0 5px 5px -3px rgba(0,0,0,.2);
+  display: flex;
+  flex-direction: column;
+  pointer-events: all;
+  cursor: move;
+  transition: height 0.2s;
+}
+.compose-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #f2f6fc;
+  border-radius: 8px 8px 0 0;
+  cursor: move;
+}
+.compose-header span { font-size: 14px; color: var(--text); }
+.compose-body { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+.compose-field {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  min-height: 40px;
+  padding: 0 12px;
+  font-size: 14px;
+}
+.compose-field label { width: 28px; color: var(--text-secondary); }
+.compose-field input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: var(--text);
+  height: 100%;
+  padding: 8px 0;
+}
+#composeBody {
+  flex: 1;
+  border: none;
+  outline: none;
+  resize: none;
+  padding: 12px;
+  font-size: 14px;
+  font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
+  line-height: 1.5;
+  color: var(--text);
+}
+.compose-footer { padding: 8px 16px; }
+.send-btn {
+  background: #0b57d0;
+  color: #fff;
+  border: none;
+  border-radius: 18px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.send-btn:hover { background: #1a62d3; }
+
+/* ================= TOAST ================= */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #323232;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 14px;
+  z-index: 200;
+  box-shadow: 0 3px 6px rgba(0,0,0,.2);
+  animation: toast-in 0.2s ease;
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translate(-50%, 12px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: #bdc1c6; }
