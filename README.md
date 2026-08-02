@@ -31,6 +31,6 @@ For each wrong answer you lose a life
 Unlike traditional games, this game uses _html_, _css_ for styling, and _js_ for backend.
 
 
-**Deployment URL:** https://carnival-game-xi.vercel.app/
+**Deployment URL:** [here](https://carnival-game-xi.vercel.app/)
 
 
