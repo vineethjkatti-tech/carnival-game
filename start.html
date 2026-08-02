@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESCAPE THE CARNIVAL</title>
+  <meta name="description"
+    content="An 8-bit psychological interactive fiction about escaping corporate burnout into a logic-defying Carnival.">
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="assets/favicon.png">
+  <!--
+    ============================================================
+    FONTS
+      Press Start 2P : chunky 8-bit UI font (titles / buttons / HUD)
+      VT323          : pixel terminal font (dialogue / body text)
+    The boring corporate monospace is the system default for
+    Scene 1 (terminal) and Scene 5 (ending text).
+    ============================================================
+  -->
+  <link href="stylesv3.css" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- ==========================================================
+       AUDIO ASSETS (your downloaded files)
+       ----------------------------------------------------------
+       >>> DROP /audio FILES NEXT TO index.html <<<
+       Already wired to the filenames in your /audio folder.
+       ========================================================== -->
+  <!-- Eerie carnival loop (Lavender Town) -->
+  <audio id="bg-music-carnival" loop preload="auto">
+    <source src="audio/YTDown.com_YouTube_Lavender-Town-Original-Japanese-Version-_Media_-sOadAaGiq4_007_128k.mp3"
+      type="audio/mpeg">
+  </audio>
+  <!-- Balloon pop (losing a life) -->
+  <audio id="sfx-balloon-pop" preload="auto">
+    <source src="audio/YTDown.com_Shorts_Balloon-Pop-Sound-Effect_Media_ePTuORtZeyA_007_128k.mp3" type="audio/mpeg">
+  </audio>
+  <!-- Glitch / transition (TV no-signal) -->
+  <!-- <audio id="sfx-glitch" preload="auto">
+    <source src="audio/YTDown.com_YouTube_No-signal-T-V-glitch-effect_Media_QnHc53a_2no_009_128k.mp3" type="audio/mpeg">
+  </audio> -->
+  <!-- Joker jumpcut scare: cut to exactly 1s / 3s of static -->
+  <audio id="sfx-jumpcut" preload="auto">
+    <source src="audio/sfx-jumpcut.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="sfx-jumpcut-long" preload="auto">
+    <source src="audio/sfx-jumpcut-long.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- ==========================================================
+       SCENE 1 -- TERMINAL (Reality)
+       ========================================================== -->
+  <section id="scene-terminal" class="scene terminal active">
+    <div class="term-window">
+      <div class="term-titlebar">
+        <span>C:\CORP\HR\TERMINAL.EXE</span>
+        <span>_ [ ] X</span>
+      </div>
+      <div class="term-body">
+        <p class="term-line">C:\CORP\HR&gt; run notice.exe</p>
+        <p class="term-line">NOTICE OF IMMEDIATE TERMINATION.</p>
+        <p class="term-line">YOUR SERVICES ARE NO LONGER REQUIRED.</p>
+        <p class="term-line dim">Your access badge has been deactivated.</p>
+        <p class="term-line dim">Your replacement has already started.</p>
+        <p class="term-line">Productivity rating: <span class="danger">ZERO</span></p>
+        <p class="term-line">C:\CORP\HR&gt; <span class="cursor"></span></p>
+      </div>
+      <!-- The subtle escape hatch -->
+      <button id="btn-escape" class="btn-escape" type="button">Want to Escape?</button>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       TRANSITION SCENE -- "Logic is a cage..."
+       ========================================================== -->
+  <section id="scene-transition" class="scene carnival">
+    <p id="transition-text" class="transition-text"></p>
+  </section>
+
+  <!-- ==========================================================
+       SCENE 2 -- THE JOKER INTRO
+       ========================================================== -->
+  <section id="scene-joker" class="scene carnival">
+    <!--
+      >>> ASSET: JOKER IMAGE <<<
+      <img id="joker" class="joker-sprite" src="joker.png"> (pounces forever)
+    -->
+    <img id="joker" class="joker-sprite" src="joker.png" alt="The Joker">
+
+    <h1 class="pixel-title">WELCOME, GUEST</h1>
+
+    <button id="btn-play" class="pixel-btn play-btn" type="button">PLAY THE GAME</button>
+
+    <div class="dialogue-box">
+      <span class="speaker">THE JOKER &gt;&gt;</span>
+      <p id="joker-dialogue" class="dialogue-text"></p>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       SCENE 3 -- THE RIDDLES
+       ========================================================== -->
+  <section id="scene-riddles" class="scene carnival">
+    <div class="hud">
+      <span class="lives-label">LIVES</span>
+      <span id="balloons" class="balloons"></span>
+    </div>
+
+    <img id="joker-riddles" class="joker-sprite small" src="joker.png" alt="The Joker">
+
+    <!-- The 2 answer buttons stay hidden until the question finishes typing -->
+    <div id="riddle-choices" class="riddle-choices hidden"></div>
+    <p id="riddle-feedback" class="feedback hidden"></p>
+
+    <div class="dialogue-box">
+      <span class="speaker">THE JOKER &gt;&gt;</span>
+      <p id="riddle-question" class="dialogue-text"></p>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       SCENE 4 -- THE FINAL PICTURE PUZZLE
+       ========================================================== -->
+  <section id="scene-puzzle" class="scene carnival">
+    <div class="hud">
+      <span class="lives-label">LIVES</span>
+      <span id="balloons-puzzle" class="balloons"></span>
+    </div>
+
+    <img id="joker-puzzle" class="joker-sprite small" src="joker.png" alt="The Joker">
+
+    <div id="puzzle-grid" class="puzzle-grid hidden"></div>
+
+    <div class="puzzle-actions">
+      <button id="btn-shuffle" class="pixel-btn ghost small hidden" type="button">SHUFFLE</button>
+      <button id="btn-solve" class="pixel-btn small hidden" type="button">SOLVE / UNLOCK DOOR</button>
+    </div>
+    <p id="puzzle-feedback" class="feedback hidden"></p>
+
+    <!--
+      >>> ASSET: PUZZLE IMAGE <<<
+      Tiles slice the src of this hidden image (alt text stays
+      "Scanned Document" as required). Save your converted JPG/PNG
+      as puzzle.png next to index.html - already done for you.
+    -->
+    <img id="puzzle-source" src="puzzle.png" alt="Scanned Document" style="display:none;">
+
+    <div class="dialogue-box">
+      <span class="speaker">THE JOKER &gt;&gt;</span>
+      <p id="puzzle-dialogue" class="dialogue-text"></p>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       SCENE 5 -- ENDING (white / winter-reality blend)
+       ========================================================== -->
+  <section id="scene-ending" class="scene">
+    <canvas id="snow-canvas" width="1" height="1"></canvas>
+
+    <div class="ending-wrap">
+      <p id="ending-line-1" class="ending-text">The ride is over.</p>
+      <p id="ending-line-2" class="ending-text">Logic survives the world.</p>
+      <p id="ending-line-3" class="ending-text red">But imagination survives the stress.</p>
+      <button id="btn-end-game" type="button">End Game</button>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       GAME OVER OVERLAY (lives = 0) -> "trapped forever" ending
+       ========================================================== -->
+  <div id="game-over" class="game-over hidden">
+    <div class="game-over-wrap">
+      <h1>GAME OVER</h1>
+      <img class="game-over-joker" src="joker-angrier.png" alt="The AngriestJoker">
+      <div class="dialogue-box">
+        <span class="speaker">THE JOKER &gt;&gt;</span>
+        <p id="game-over-dialogue" class="dialogue-text"></p>
+      </div>
+      <p class="game-over-hint">YOU FAILED. YOU ARE TRAPPED HERE FOREVER.</p>
+      <button id="btn-gameover-reload" class="pixel-btn hidden" type="button">TRY AGAIN?</button>
+    </div>
+  </div>
+
+  <!-- Fullscreen glitch layer used during transitions -->
+  <div id="glitch-overlay" class="glitch-overlay" aria-hidden="true"></div>
+  <!-- Fullscreen Joker jumpcut: suddenly covers the screen, then back -->
+  <div id="joker-jumpcut" class="joker-jumpcut hidden" aria-hidden="true">
+    <img id="joker-jumpcut-img" src="joker.png" alt="The Joker">
+  </div>
+  <!-- Cinematic photo reveal when the puzzle is solved -->
+  <div id="puzzle-flash" class="puzzle-flash hidden" aria-hidden="true">
+    <div class="puzzle-flash-frame">
+      <img id="puzzle-flash-img" alt="Scanned Document">
+    </div>
+  </div>
+  <!-- Reward flash: shows after each correct riddle answer -->
+  <div id="reward-flash" class="reward-flash hidden" aria-hidden="true">
+    <span class="passed-banner">YOU PASSED!</span>
+    <div class="piece-preview" id="reward-piece-preview"></div>
+    <span class="piece-label" id="reward-piece-label"></span>
+  </div>
+  
+  <script src="scriptv3.js"></script>
+</body>
+
+</html>
