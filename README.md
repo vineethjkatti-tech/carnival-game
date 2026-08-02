@@ -12,7 +12,7 @@ leave the place he is trapped by a cunning joker who askes him to answer his **r
 
 You have 3 lives and there are **9 riddles** and for each right answer you a get **a piece** of a **puzzle**. If you get all the riddles right then you get to solve the puzzle
 with all the pieces.
-But, if you lose all you lives........._(try it yourself!!)_
+But, if you lose all your lives........._(try it yourself!!)_
 
 # Tech Stack
 Unlike traditional games, this game uses _html_, _css_ for styling, and _js_ for backend.
