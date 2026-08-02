@@ -14,6 +14,14 @@ You have 3 lives and there are **9 riddles** and for each right answer you a get
 with all the pieces.
 But, if you lose all your lives........._(try it yourself!!)_
 
+# Game Mechanics
+You have three lives
+There are 9 riddles
+Each question has four options out of which only one is correct
+For each correct answer you get a piece of the puzzle
+For each wrong answer you lose a life
+
+
 # Tech Stack
 Unlike traditional games, this game uses _html_, _css_ for styling, and _js_ for backend.
 
