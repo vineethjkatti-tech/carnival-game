@@ -377,7 +377,7 @@ const riddles = [
   {
     question: 'Where does the final fight against the killer usually take place?',
     options: [
-      { text: 'The Hall of Mirrors or Funhouse', correct: true },
+      { text: 'The abandoned parking lot', correct: true },
       { text: 'The gift shop counter', correct: false },
       { text: 'A pristine luxury hotel', correct: false },
       { text: 'The public library', correct: false }
