@@ -16,10 +16,15 @@ But, if you lose all your lives........._(try it yourself!!)_
 
 # Game Mechanics
 You have three lives
+
 There are 9 riddles
+
 Each question has four options out of which only one is correct
+
 For each correct answer you get a piece of the puzzle
+
 For each wrong answer you lose a life
+
 
 
 # Tech Stack
