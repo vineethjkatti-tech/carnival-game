@@ -339,7 +339,7 @@ function start() {
           goToScene('scene-joker');
           playAudio('bg-music-carnival', true, 0.3);
           typewriter(document.getElementById('joker-dialogue'),
-            "You came to escape reality... But your mind is bound by rules. Answer without logic, or lose your mind forever.",
+            "You came to escape reality... But your mind is bound by rules. Answer with basic logic, or lose your mind forever.",
             40, function () {
               // Reveal the Play button only after typing finishes.
               document.getElementById('btn-play').classList.add('fade-in');
