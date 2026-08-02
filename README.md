@@ -29,11 +29,9 @@ For each wrong answer you lose a life
 
 # Themes Used:
 
-**1. Corporate Burnout VS Carnival**: This game contrasts between cold, bluntness and logical with illogical, imaginary and creative.
+**1. Joker as the Other Side**: The joker here is not another character but the repressed and indifferent version of the user himself.
 
-**2. Joker as the Other Side**: The joker here is not another character but the repressed and indifferent version of the user himself.
-
-**3. The Abstract Shift**: Moving from loud, frantic neon arcade lights to a quiet, stark white screen with falling pixel-snow **represents** stillness and **catharsis**(ending).
+**2. The Abstract Shift**: Moving from loud, frantic neon arcade lights to a quiet, stark white screen with falling pixel-snow **represents** stillness and **catharsis**(ending).
 
 
 # Tech Stack
