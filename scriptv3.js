@@ -322,7 +322,7 @@ function showGameOver() {
 function start() {
   // Glitch sound fires EXACTLY with the visual glitch...
   playAudio('sfx-glitch', false, 1.0);
-  toggleFullscreen();
+  // toggleFullscreen();
   triggerGlitch(900, false);
   // ...and is cut off when the visual glitch ends, so the long
   // 4.9s static track never bleeds into the transition scene.
