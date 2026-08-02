@@ -332,7 +332,7 @@ function start() {
     goToScene('scene-transition');
     // Transition text types silently.
     typewriter(document.getElementById('transition-text'),
-      'Logic is a cage. Welcome to the Carnival.', 45, function () {
+      ' Welcome to the Carnival.', 45, function () {
         // Short beat after the line lands, then slide into the carnival
         // (no more 3-second dead pause before the next glitch/scene).
         setTimeout(function () {
