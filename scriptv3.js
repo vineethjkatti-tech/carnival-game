@@ -366,84 +366,84 @@ document.getElementById('btn-play').addEventListener('click', function () {
 
 const riddles = [
   {
-    question: 'Who is almost ALWAYS the main villain or killer in an evil carnival movie?',
+    question: 'Who is usually the creepy villain in a carnival horror movie?',
     options: [
-      { text: 'The creepy clown', correct: true },
-      { text: 'The popcorn vendor', correct: false },
-      { text: 'The ticket booth teenager', correct: false },
-      { text: 'The balloon artist', correct: false }
+      { text: 'The scary clown', correct: true },
+      { text: 'A friendly golden retriever', correct: false },
+      { text: 'A guy selling cotton candy', correct: false },
+      { text: 'A happy toddler', correct: false }
     ]
   },
   {
-    question: 'Where does the final showdown between the killer and the hero usually take place?',
+    question: 'Where does the final fight against the killer usually take place?',
     options: [
-      { text: 'The prize counter', correct: false },
-      { text: 'The parking lot', correct: false },
       { text: 'The Hall of Mirrors or Funhouse', correct: true },
-      { text: 'The public restrooms', correct: false }
+      { text: 'The gift shop counter', correct: false },
+      { text: 'A pristine luxury hotel', correct: false },
+      { text: 'The public library', correct: false }
     ]
   },
   {
-    question: 'What ride is guaranteed to break down, jam, or trap characters at the top?',
+    question: 'Which carnival ride always breaks down and traps people at the top?',
     options: [
       { text: 'The Ferris Wheel', correct: true },
-      { text: 'The Bumper Cars', correct: false },
-      { text: 'The Merry-Go-Round', correct: false },
-      { text: 'The Fun Slide', correct: false }
+      { text: 'The spinning teacups', correct: false },
+      { text: 'The bumper cars', correct: false },
+      { text: 'The mini slide', correct: false }
     ]
   },
   {
-    question: 'Which character type almost always dies first when things go wrong?',
+    question: 'Who usually gets eliminated first when things go wrong?',
     options: [
-      { text: 'The quiet protagonist', correct: false },
-      { text: 'The arrogant bully or teenager who wanders off alone', correct: true },
-      { text: 'The heroic local cop', correct: false },
-      { text: 'The carnival owner', correct: false }
+      { text: 'The arrogant character who wanders off alone', correct: true },
+      { text: 'The main hero', correct: false },
+      { text: 'The entire local police department', correct: false },
+      { text: 'The movie director', correct: false }
     ]
   },
   {
-    question: 'What classic fortune-telling prop is usually cursed or predicts everyone’s doom?',
+    question: 'Which fortune-telling device is always cursed or creepy?',
     options: [
-      { text: 'A magic 8-ball', correct: false },
-      { text: 'An automated animatronic machine (like Zoltar)', correct: true },
-      { text: 'A scratch-off ticket', correct: false },
-      { text: 'A fortune cookie', correct: false }
+      { text: 'An animatronic machine (like Zoltar)', correct: true },
+      { text: 'A kitchen microwave', correct: false },
+      { text: 'A soda vending machine', correct: false },
+      { text: 'A pocket calculator', correct: false }
     ]
   },
   {
-    question: 'What happens to cell phones as soon as the characters step onto the carnival grounds?',
+    question: 'What happens to phone battery and service as soon as you enter a scary carnival?',
     options: [
-      { text: 'They download a scary app', correct: false },
-      { text: 'They instantly lose signal or die', correct: true },
-      { text: 'They start calling the killer automatically', correct: false },
-      { text: 'The screen shatters', correct: false }
+      { text: 'You instantly lose signal or the battery dies', correct: true },
+      { text: 'You get perfect 5G speed', correct: false },
+      { text: 'Your phone automatically fully charges', correct: false },
+      { text: 'It starts playing party music', correct: false }
     ]
   },
   {
-    question: 'What classic carnival snack is almost always turned into something disgusting or poisonous?',
+    question: 'Which classic carnival treat is usually poisoned or turned evil?',
     options: [
       { text: 'Candy Apples', correct: true },
-      { text: 'Soft Pretzels', correct: false },
-      { text: 'Funnel Cake', correct: false },
-      { text: 'Nachos', correct: false }
+      { text: 'Bottle of water', correct: false },
+      { text: 'Fresh celery sticks', correct: false },
+      { text: 'Plain oatmeal', correct: false }
     ]
   },
   {
-    question: 'What warning does a local elder or creepy carnival worker ALWAYS give early in the movie?',
+    question: 'What warning does the creepy local elder always tell the main characters?',
     options: [
-      { text: '"The food is overpriced!"', correct: false },
-      { text: '"Watch out for rain!"', correct: false },
-      { text: '"Don\'t stay after dark / Don\'t go in there!"', correct: true },
-      { text: '"Keep your shoes tied!"', correct: false }
+      { text: '"Don\'t stay after dark!"', correct: true },
+      { text: '"Enjoy the discount snacks!"', correct: false },
+      { text: '"Have a wonderful day!"', correct: false },
+      { text: '"Remember to wash your hands!"', correct: false }
     ]
   },
   {
-    question: 'What happens when a character tries to run away and escape the carnival grounds?',
+    question: 'What happens when someone tries to run away and escape the carnival grounds?',
     options: [
-      { text: 'They get trapped in an endless loop that brings them right back to the center', correct: true },
-      { text: 'A bus picks them up immediately', correct: false },
-      { text: 'The exit gates open smoothly', correct: false },
-      { text: 'They get arrested by security', correct: false }
+      { text: 'They get stuck in a loop and end up right back in the center', correct: true },
+      { text: 'A limousine picks them up and takes them home', correct: false },
+      { text: 'They win a free trophy', correct: false },
+      { text: 'The gates open wide and wish them good luck', correct: false }
     ]
   }
 ];
